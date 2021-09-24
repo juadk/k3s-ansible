@@ -84,3 +84,24 @@
     src: /usr/local/bin/k3s
     dest: /usr/local/bin/crictl
     state: link
+
+- name: Add Helm repo key
+  apt_key:
+    url: "https://baltocdn.com/helm/signing.asc"
+    state: present
+
+- name: Add Helm repo
+  apt_repository:
+    repo: deb https://baltocdn.com/helm/stable/debian/ all main
+    state: present
+    filename: 'helm-stable-debian.list'
+
+- name: Install Helm package
+  apt:
+    name: helm
+    update_cache: yes
+
+- name: Add KUBECONFIG file to .bashrc file
+  lineinfile:
+    path: ~{{ ansible_user }}/.bashrc
+    line: export KUBECONFIG=~{{ ansible_user }}/.kube/config
